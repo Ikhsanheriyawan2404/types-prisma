@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-class CompanyController { 
+class CompanyController {
 
   public async index(_: Request, res: Response): Promise<Response> {
     try {
@@ -20,6 +20,8 @@ class CompanyController {
       });
     }
   }
+
+  // COMPLETE CRUD
 }
 
 export default new CompanyController();

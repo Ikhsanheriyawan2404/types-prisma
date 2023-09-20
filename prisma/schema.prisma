@@ -14,7 +14,11 @@ model User {
   id    Int     @id @default(autoincrement())
   email String  @unique
   name  String?
+  company_id Int
+
   posts Post[]
+  transactions Transaction[]
+  company    Company    @relation(fields: [company_id], references: [id])
 }
 
 model Post {
@@ -39,4 +43,28 @@ model Company {
   created_at DateTime? @default(now())
   update_at DateTime? @default(now())
 
+  users User[]
+}
+
+enum EnumTransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Transaction {
+  id    Int     @id @default(autoincrement())
+  user_id Int
+  user User @relation(fields: [user_id], references: [id])
+  total Int
+  vat Int
+  profit Int
+  bank_code Int
+  account_number Int
+  account_holder_name Int
+  description String?
+  status EnumTransactionStatus
+  failur_code String?
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
 }

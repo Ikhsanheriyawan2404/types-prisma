@@ -21,6 +21,8 @@ class UserController {
       });
     }
   }
+
+  // SHOW & UPDATE
 }
 
 export default new UserController();
