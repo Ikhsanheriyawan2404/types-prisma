@@ -3,16 +3,15 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient()
 
-class UserController { 
+class CompanyController { 
 
   public async index(_: Request, res: Response): Promise<Response> {
     try {
-      const users = await prisma.user.findMany();
-      console.log(users)
+      const companies = await prisma.company.findMany();
 
       return res.status(200).json({
-        message: "All users",
-        data: users,
+        message: "Companies",
+        data: companies,
       });
     } catch (e: any) {
       return res.status(500).json({
@@ -23,4 +22,4 @@ class UserController {
   }
 }
 
-export default new UserController();
+export default new CompanyController();
