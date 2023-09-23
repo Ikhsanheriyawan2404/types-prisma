@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient()
+import { db } from "../../src/utils/db.server";
 
 class UserController { 
 
   public async index(_: Request, res: Response): Promise<Response> {
     try {
-      const users = await prisma.user.findMany();
+      const users = await db.user.findMany();
       console.log(users)
 
       return res.status(200).json({
