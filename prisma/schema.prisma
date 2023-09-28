@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,60 +8,61 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  company_id Int
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  name            String
+  company_id      Int
+  created_at      DateTime?      @default(now())
+  updated_at      DateTime?      @default(now())
 
-  posts Post[]
-  transactions Transaction[]
-  company    Company    @relation(fields: [company_id], references: [id])
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  saldo_histories SaldoHistory[]
+  transactions    Transaction[]
+  company         Company        @relation(fields: [company_id], references: [id])
 }
 
 model Company {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String?
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String?
   working_days Int
-  cutoff_date Int
-  fee Int
+  cutoff_date  Int
+  fee          Int
   fee_discount Int
-  join_date DateTime?
-  end_date DateTime?
-  created_at DateTime? @default(now())
-  update_at DateTime? @default(now())
+  join_date    DateTime?
+  end_date     DateTime?
+  created_at   DateTime? @default(now())
+  updated_at   DateTime? @default(now())
+  users        User[]
+}
 
-  users User[]
+model Transaction {
+  id                  Int                   @id @default(autoincrement())
+  user_id             Int
+  total               Int
+  vat                 Int
+  profit              Int
+  bank_code           Int
+  account_number      Int
+  account_holder_name Int
+  description         String?
+  status              EnumTransactionStatus
+  failur_code         String?
+  created_at          DateTime?             @default(now())
+  updated_at          DateTime?             @default(now())
+  user                User                  @relation(fields: [user_id], references: [id])
+}
+
+model SaldoHistory {
+  id         Int       @id @default(autoincrement())
+  amount     Decimal
+  user_id    Int
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  user       User      @relation(fields: [user_id], references: [id])
 }
 
 enum EnumTransactionStatus {
   PENDING
   SUCCESS
   FAILED
-}
-
-model Transaction {
-  id    Int     @id @default(autoincrement())
-  user_id Int
-  user User @relation(fields: [user_id], references: [id])
-  total Int
-  vat Int
-  profit Int
-  bank_code Int
-  account_number Int
-  account_holder_name Int
-  description String?
-  status EnumTransactionStatus
-  failur_code String?
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
 }
