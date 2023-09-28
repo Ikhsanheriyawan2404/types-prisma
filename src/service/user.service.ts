@@ -1,35 +1,42 @@
+import { encryptPassword } from "../helpers/encryption";
 import { db } from "../utils/db.server";
+import { User } from "@prisma/client";
 
-type User = {
-    id: number;
-    name?: string;
-    email: string;
-    company_id: number;
-    created_at?: Date;
-    updated_at?: Date;
-}
+// type User = {
+//     id: number;
+//     name: string;
+//     email: string;
+//     password: string;
+//     saldo: number;
+//     salary: number;
+//     department_id?: number;
+//     company_id: number;
+//     created_at?: Date;
+//     updated_at?: Date;
+//     // company: Company;
+// }
 
 class UserService {
 
-    public listUsers = async (): Promise<User[]> => {
-        return db.user.findMany({
-            select: {
-                id: true,
-                name: false,
-                email: true,
-                company_id: true,
-                company: {
-                    select: {
-                        name: true,
-                        fee: true,
-                        fee_discount: true,
-                        working_days: true,
-                        cutoff_date: true
-                    }
-                }
-            }
+    public listUsers = async <Key extends keyof User>(
+        keys: Key[] = [
+          'id',
+          'email',
+          'name',
+          'password',
+          'saldo',
+          'salary',
+          'company_id',
+          'department_id',
+          'created_at',
+          'updated_at'
+        ] as Key[]
+      ): Promise<Pick<User, Key>[]> => {
+        const users = await db.user.findMany({
+        //   select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {}),
         });
-    }
+        return users as Pick<User, Key>[];
+      };
 
     /**
      * Get user by id
@@ -53,11 +60,44 @@ class UserService {
         }) as Promise<Pick<User, Key> | null>;
     };
 
-    // public createUser = async (user: User): Promise<User> => {
-    //     return db.user.create({
-    //         data: user
-    //     });
-    // }
+    public create = async (
+        email: string,
+        name: string,
+        password: string,
+        saldo: number,
+        salary: number,
+        department_id: number,
+        company_id: number,
+    ): Promise<void> => {
+
+        const user = db.user.create({
+            data: {
+                name,
+                email,
+                password: await encryptPassword(password),
+                saldo,
+                salary,
+                company: {
+                    connect: { id: company_id },
+                },
+                department: {
+                    connect: { id: department_id },
+                },
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                password: true,
+                saldo: true,
+                salary: true,
+                company_id: true,
+                department_id: true,
+            }
+        })
+
+        // return user;
+    }
 }
 
 export default new UserService();

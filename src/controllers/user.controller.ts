@@ -36,6 +36,37 @@ class UserController {
     }
   }
 
+  public create = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const {
+        name,
+        email,
+        password,
+        saldo,
+        salary,
+        company_id,
+        department_id,
+      } = req.body;
+
+      const user = await UserService.create(
+        name,
+        email,
+        password,
+        saldo,
+        salary,
+        company_id,
+        department_id,
+      );
+
+      return Helper.response(res, 201, "User created", user);
+    } catch (e: any) {
+      return res.status(500).json({
+        message: e.message,
+        errors: e,
+      });
+    }
+  }; 
+
   // SHOW & UPDATE
 }
 

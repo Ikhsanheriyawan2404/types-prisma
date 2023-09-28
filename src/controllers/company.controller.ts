@@ -59,17 +59,16 @@ class CompanyController {
         end_date,
       } = req.body;
 
-      const company = await prisma.company.create({
-        data: {
-          name,
-          email,
-          working_days,
-          cutoff_date,
-          fee,
-          fee_discount,
-          join_date,
-          end_date,
-        },
+
+      const company = await CompanyService.create({
+        name,
+        email,
+        working_days,
+        cutoff_date,
+        fee,
+        fee_discount,
+        join_date,
+        end_date,
       });
 
       return res.status(201).json({

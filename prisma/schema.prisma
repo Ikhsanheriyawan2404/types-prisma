@@ -7,47 +7,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Department {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  users      User[]
+
+  @@map("departments")
+}
+
 model User {
   id              Int            @id @default(autoincrement())
   email           String         @unique
-  name            String
-  password        String
+    name            String @db.VarChar(255)
+  password        String @db.VarChar(255)
   saldo           Decimal        @default(0)
   salary          Decimal
   company_id      Int
   department_id   Int
   created_at      DateTime?      @default(now())
-  updated_at      DateTime?      @default(now())
-
+  updated_at      DateTime?      @updatedAt
+  
   saldo_histories SaldoHistory[]
   transactions    Transaction[]
   company         Company        @relation(fields: [company_id], references: [id])
   department      Department     @relation(fields: [department_id], references: [id])
-}
 
-model Department {
-  id         Int       @id @default(autoincrement())
-  name       String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  users        User[]
+  @@map("users")
 }
 
 model Company {
   id           Int       @id @default(autoincrement())
-  name         String
-  email        String?
+  name         String @db.VarChar(255)
+  email        String? @db.VarChar(255)
   working_days Int
   cutoff_date  Int
   fee          Int
   fee_discount Int
-  join_date    DateTime?
-  end_date     DateTime?
+  join_date    DateTime? @db.Date
+  end_date     DateTime? @db.Date
   created_at   DateTime? @default(now())
-  updated_at   DateTime? @default(now())
-
+  updated_at   DateTime? @updatedAt
   users        User[]
+
+  @@map("companies")
 }
 
 model Transaction {
@@ -61,10 +65,12 @@ model Transaction {
   account_holder_name Int
   description         String?
   status              EnumTransactionStatus
-  failur_code         String?
+  failur_code         String? @db.VarChar(255)
   created_at          DateTime?             @default(now())
-  updated_at          DateTime?             @default(now())
+  updated_at          DateTime?             @updatedAt
   user                User                  @relation(fields: [user_id], references: [id])
+
+  @@map("transactions")
 }
 
 model SaldoHistory {
@@ -72,8 +78,10 @@ model SaldoHistory {
   amount     Decimal
   user_id    Int
   created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
   user       User      @relation(fields: [user_id], references: [id])
+
+  @@map("saldo_histories")
 }
 
 enum EnumTransactionStatus {

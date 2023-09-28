@@ -1,6 +1,7 @@
+import { User } from "@prisma/client";
 import { db } from "../../utils/db.server";
 
-type Company = {
+export type Company = {
     id: number;
     name: string;
     email?: string;
@@ -8,6 +9,9 @@ type Company = {
     cutoff_date: number;
     fee: number;
     fee_discount: number;
+    join_date?: Date,
+    end_date?: Date,
+    users?: User[]
 }
 
 class CompanyService {
@@ -20,7 +24,8 @@ class CompanyService {
                 fee: true,
                 fee_discount: true,
                 working_days: true,
-                cutoff_date: true
+                cutoff_date: true,
+                users: true
             }
         });
     }
@@ -36,12 +41,13 @@ class CompanyService {
                 fee: true,
                 fee_discount: true,
                 working_days: true,
-                cutoff_date: true
+                cutoff_date: true,
+                users: true
             }
         });
     }
 
-    public createCompany = async (company: Omit<Company, "id">): Promise<Company> => {
+    public create = async (company: Omit<Company, "id">): Promise<Company> => {
         const {
             name,
             email,
@@ -49,6 +55,8 @@ class CompanyService {
             cutoff_date,
             fee,
             fee_discount,
+            join_date,
+            end_date,
         } = company;
 
         return db.company.create({
@@ -59,6 +67,8 @@ class CompanyService {
                 cutoff_date,
                 fee,
                 fee_discount,
+                join_date,
+                end_date,
             },
             select: {
                 id: true,

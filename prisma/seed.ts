@@ -1,5 +1,6 @@
-import { Company, User, PrismaClient } from "@prisma/client";
+import { Company, User, Department, PrismaClient, Prisma } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { encryptPassword } from "../src/helpers/encryption";
 
 const prisma = new PrismaClient();
 
@@ -10,11 +11,23 @@ function companiesRandomId(companies: Company[]): number {
 }
 
 async function main() {
+  // await prisma.department.deleteMany({}); // use with caution.
   await prisma.user.deleteMany({}); // use with caution.
   await prisma.company.deleteMany({}); // use with caution.
 
   const totalData = 100;
   let companies = [];
+
+  const department: Omit<Department, 'id'> = {
+    name: 'Officer',
+    created_at: faker.date.past(),
+    updated_at: faker.date.recent(),
+  };
+
+  const departmentData = await prisma.department.create({
+  // await prisma.department.create({
+    data: department,
+  });
 
   for (let i = 0; i < totalData; i++) {
 
@@ -40,6 +53,10 @@ async function main() {
     const user: Omit<User, 'id'> = {
       name: faker.company.name(),
       email: faker.internet.email(),
+      password: await encryptPassword("password123"),
+      saldo: new Prisma.Decimal(0),
+      department_id: departmentData.id,
+      salary: new Prisma.Decimal(4_900_000), // UMK Kota Jakarta 2022
       company_id: companiesRandomId(companies),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
