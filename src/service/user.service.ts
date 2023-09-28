@@ -52,6 +52,12 @@ class UserService {
         select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {})
         }) as Promise<Pick<User, Key> | null>;
     };
+
+    // public createUser = async (user: User): Promise<User> => {
+    //     return db.user.create({
+    //         data: user
+    //     });
+    // }
 }
 
 export default new UserService();

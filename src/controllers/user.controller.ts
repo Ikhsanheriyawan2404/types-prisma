@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../service/user.service";
+import Helper from "../helpers/response";
 
 class UserController { 
 
@@ -7,10 +8,7 @@ class UserController {
     try {
       const users = await UserService.listUsers();
 
-      return res.status(200).json({
-        message: "All users",
-        data: users,
-      });
+      return Helper.response(res, 200, "List Users", users);
     } catch (e: any) {
       return res.status(500).json({
         message: e.message,
@@ -26,16 +24,10 @@ class UserController {
       const user = await UserService.getUserById(Number(id));
 
       if (!user) {
-        res.status(404).json({
-          message: "User Not Found",
-          data: null,
-        });
+        return Helper.responseErr(res, 404, "Not Found", null);
       }
 
-      return res.status(200).json({
-        message: "User by id",
-        data: user,
-      });
+      return Helper.response(res, 200, "User Details", user);
     } catch (e: any) {
       return res.status(500).json({
         message: e.message,
