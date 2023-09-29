@@ -60,44 +60,44 @@ class UserService {
         }) as Promise<Pick<User, Key> | null>;
     };
 
-    public create = async (
-        email: string,
-        name: string,
-        password: string,
-        saldo: number,
-        salary: number,
-        department_id: number,
-        company_id: number,
-    ): Promise<void> => {
+    // public create = async (
+    //     email: string,
+    //     name: string,
+    //     password: string,
+    //     saldo: number,
+    //     salary: number,
+    //     department_id: number,
+    //     company_id: number,
+    // ): Promise<void> => {
 
-        const user = db.user.create({
-            data: {
-                name,
-                email,
-                password: await encryptPassword(password),
-                saldo,
-                salary,
-                company: {
-                    connect: { id: company_id },
-                },
-                department: {
-                    connect: { id: department_id },
-                },
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-                password: true,
-                saldo: true,
-                salary: true,
-                company_id: true,
-                department_id: true,
-            }
-        })
+    //     const user = db.user.create({
+    //         data: {
+    //             name,
+    //             email,
+    //             password: await encryptPassword(password),
+    //             saldo,
+    //             salary,
+    //             company: {
+    //                 connect: { id: company_id },
+    //             },
+    //             department: {
+    //                 connect: { id: department_id },
+    //             },
+    //         },
+    //         select: {
+    //             id: true,
+    //             name: true,
+    //             email: true,
+    //             password: true,
+    //             saldo: true,
+    //             salary: true,
+    //             company_id: true,
+    //             department_id: true,
+    //         }
+    //     })
 
-        // return user;
-    }
+    //     // return user;
+    // }
 }
 
 export default new UserService();

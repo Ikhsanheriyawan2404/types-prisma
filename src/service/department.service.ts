@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { db } from "../utils/db.server";
+import { log } from "winston";
 
 // import { Department } from "@prisma/client";
 
@@ -12,12 +13,20 @@ type Department = {
 class DepartmentService {
 
     public listData = async (): Promise<Department[]> => {
-        return db.department.findMany({
+        const departments = await db.department.findMany({
             select: {
-                id: true,
-                name: true,
+              id: true,
+              name: true,
             },
         });
+        
+        const newData = JSON.stringify(departments,
+            (key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
+            )
+        console.log(newData);
+        
+            return departments
+        // return newData;
     }
 
     public findById = async (id: number): Promise<Department | null> => {

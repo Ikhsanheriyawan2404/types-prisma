@@ -1,4 +1,4 @@
-# Trasure Hunter
+# Ease Wage Access
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
