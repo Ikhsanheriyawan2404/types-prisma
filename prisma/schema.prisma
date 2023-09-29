@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Department {
-  id         Int       @id @default(autoincrement())
+  id         BigInt    @id @default(autoincrement())
   name       String    @db.VarChar(255)
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
@@ -18,65 +18,87 @@ model Department {
 }
 
 model User {
-  id              Int            @id @default(autoincrement())
-  email           String         @unique
-    name            String @db.VarChar(255)
-  password        String @db.VarChar(255)
-  saldo           Decimal        @default(0)
-  salary          Decimal
-  company_id      Int
-  department_id   Int
-  created_at      DateTime?      @default(now())
-  updated_at      DateTime?      @updatedAt
-  
+  id                  BigInt    @id @default(autoincrement())
+  company_id          BigInt?
+  department_id       BigInt?
+  name                String    @db.VarChar(255)
+  email               String    @unique @db.VarChar(255)
+  email_verified_at   DateTime? @db.Timestamp(0)
+  password            String    @db.VarChar(255)
+  remember_token      String?   @db.VarChar(100)
+  active              String    @default("1") @db.VarChar(255)
+  role                String    @db.VarChar(255)
+  bank_account        String    @db.VarChar(255)
+  account_number      String    @db.VarChar(255)
+  account_holder_name String    @db.VarChar(255)
+  employee_id         String?   @db.VarChar(255)
+  phone_number        String?   @db.VarChar(255)
+  salary              Decimal   @default(0) @db.Decimal(15, 2)
+  saldo               Decimal   @default(0) @db.Decimal(15, 2)
+  created_at          DateTime? @default(now()) @db.Timestamp(0)
+  updated_at          DateTime? @updatedAt @db.Timestamp(0)
+  deleted_at          DateTime? @db.Timestamp(0)
+
   saldo_histories SaldoHistory[]
   transactions    Transaction[]
-  company         Company        @relation(fields: [company_id], references: [id])
-  department      Department     @relation(fields: [department_id], references: [id])
+  company         Company?       @relation(fields: [company_id], references: [id])
+  department      Department?    @relation(fields: [department_id], references: [id])
+  // @@index([company_id(ops: Int4BloomOps)], type: BTree)
 
   @@map("users")
 }
 
 model Company {
-  id           Int       @id @default(autoincrement())
-  name         String @db.VarChar(255)
-  email        String? @db.VarChar(255)
-  working_days Int
-  cutoff_date  Int
-  fee          Int
-  fee_discount Int
-  join_date    DateTime? @db.Date
-  end_date     DateTime? @db.Date
-  created_at   DateTime? @default(now())
-  updated_at   DateTime? @updatedAt
-  users        User[]
+  id                 BigInt    @id @default(autoincrement())
+  name               String    @db.VarChar(255)
+  npwp               String?   @db.VarChar(255)
+  nib                String?   @db.VarChar(255)
+  join_date          DateTime? @db.Date
+  end_date           DateTime? @db.Date
+  name_pic           String?   @db.VarChar(255)
+  phone_pic          String?   @db.VarChar(255)
+  email_pic          String    @db.VarChar(255)
+  cutoff_date        Int
+  payroll_date       Int?
+  fee                Decimal   @db.Decimal(15, 2)
+  fee_discount       Decimal   @db.Decimal(15, 2)
+  working_days       Int       @default(14)
+  active             String    @default("1") @db.VarChar(255)
+  batch              Int
+  disbursement_dates String?
+
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @updatedAt @db.Timestamp(0)
+  users      User[]
 
   @@map("companies")
 }
 
 model Transaction {
-  id                  Int                   @id @default(autoincrement())
-  user_id             Int
-  total               Int
-  vat                 Int
-  profit              Int
-  bank_code           Int
-  account_number      Int
-  account_holder_name Int
+  id                  BigInt    @id @default(autoincrement())
+  uuid                String    @unique(map: "transactions_uuid_unique") @db.Char(36)
+  user_id             BigInt
+  total               Decimal   @db.Decimal(15, 2)
+  vat                 Decimal   @db.Decimal(15, 2)
+  profit              Decimal   @db.Decimal(15, 2)
+  bank_code           String    @db.VarChar(255)
+  account_number      String    @db.VarChar(255)
+  account_holder_name String    @db.VarChar(255)
   description         String?
-  status              EnumTransactionStatus
-  failur_code         String? @db.VarChar(255)
-  created_at          DateTime?             @default(now())
-  updated_at          DateTime?             @updatedAt
-  user                User                  @relation(fields: [user_id], references: [id])
+  status              String    @db.VarChar(255)
+  failure_code        String?   @db.VarChar(255)
+  created_at          DateTime? @default(now()) @db.Timestamp(0)
+  updated_at          DateTime? @updatedAt @db.Timestamp(0)
+  user                User      @relation(fields: [user_id], references: [id])
 
+  @@index([created_at], map: "transactions_created_at_index")
   @@map("transactions")
 }
 
 model SaldoHistory {
   id         Int       @id @default(autoincrement())
   amount     Decimal
-  user_id    Int
+  user_id    BigInt
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
   user       User      @relation(fields: [user_id], references: [id])
@@ -84,8 +106,13 @@ model SaldoHistory {
   @@map("saldo_histories")
 }
 
-enum EnumTransactionStatus {
-  PENDING
-  SUCCESS
-  FAILED
+model Bank {
+  id         BigInt    @id @default(autoincrement())
+  bank_code  String    @db.VarChar(255)
+  name       String    @db.VarChar(255)
+  fee        Int
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+
+  @@map("banks")
 }

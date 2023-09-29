@@ -4,12 +4,10 @@ import moment from 'moment-timezone';
 class SaldoAccumulationJob {
 
     public async start(): Promise<void> {
-
+        console.log("Saldo Accumulation Job started.");
+        
         const lastDayOfMonth = moment().endOf('month').date();
         const currentDate = moment().date();
-
-        console.log('lastDayOfMonth', lastDayOfMonth);
-        console.log('currentDate', currentDate);
 
         const users = await db.user.findMany({
             select: {

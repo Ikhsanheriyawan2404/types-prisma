@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import routes from "./routes";
 import saldoAccumulationJob from "./jobs/saldo.accumulation.job";
 import { CronJob } from 'cron';
+import winston from "winston";
 
 dotenv.config();
 
@@ -20,6 +21,22 @@ app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
+winston.createLogger({
+  // Log only if level is less than (meaning more severe) or equal to this
+  level: "info",
+  // Use timestamp and printf to create a standard log format
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+    )
+  ),
+  // Log to the console and a file
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: "logs/app.log" }),
+  ],
+});
 
 let jobSaldoAccumulationAndReset = new CronJob(
   '0 * * * * *', // Setiap satu menit (0 detik, setiap menit)
