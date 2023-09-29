@@ -10,6 +10,9 @@ class SaldoAccumulationJob {
         const currentDate = moment().date();
 
         const users = await db.user.findMany({
+            where: {
+                role: "user"
+            },
             select: {
                 id: true,
                 saldo: true,
@@ -29,6 +32,9 @@ class SaldoAccumulationJob {
         for (const user of users) {
             // ada kemungkinan kita tidak menemui tgl sprti berikut 29,30,31
             // dan kemungkinan untuk reset jadi skip. maka solusinya
+
+            if (!user.company) return;
+
             let cutOffDate = user.company.cutoff_date + 1;
 
             if (cutOffDate > lastDayOfMonth) {
@@ -56,6 +62,9 @@ class SaldoAccumulationJob {
         }
 
         for (const user of users) {
+            
+            if (!user.company) return;
+
             let salary: number = Number(user.salary);
             let workingDays: number = user.company.working_days;
             let dailyWages: number = salary / workingDays;
