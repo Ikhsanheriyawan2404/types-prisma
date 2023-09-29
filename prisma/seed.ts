@@ -11,7 +11,7 @@ function companiesRandomId(companies: Company[]): number {
 }
 
 async function main() {
-  // await prisma.department.deleteMany({}); // use with caution.
+  await prisma.department.deleteMany({}); // use with caution.
   await prisma.user.deleteMany({}); // use with caution.
   await prisma.company.deleteMany({}); // use with caution.
 
