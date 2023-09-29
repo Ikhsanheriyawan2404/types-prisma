@@ -2,6 +2,8 @@ import express, { Express } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import routes from "./routes";
+import saldoAccumulationJob from "./jobs/saldo.accumulation.job";
+import { CronJob } from 'cron';
 
 dotenv.config();
 
@@ -17,6 +19,18 @@ app.use(cors());
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 app.use(routes);
+
+
+let jobSaldoAccumulationAndReset = new CronJob(
+  '0 * * * * *', // Setiap satu menit (0 detik, setiap menit)
+  function() {
+    saldoAccumulationJob.start();
+  },
+  null,
+  true,
+  'Asia/Jakarta'
+);
+jobSaldoAccumulationAndReset.start();
 
 const start = async (): Promise<void> => {
   try {
