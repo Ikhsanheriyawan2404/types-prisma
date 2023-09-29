@@ -4,7 +4,7 @@ import { db } from "../utils/db.server";
 // import { Department } from "@prisma/client";
 
 type Department = {
-    id: number,
+    id: bigint,
     name: string,
     users?: User[]
 }
