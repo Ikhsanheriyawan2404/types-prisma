@@ -1,5 +1,5 @@
 import { User, Company } from "@prisma/client";
-import { db } from "../../utils/db.server";
+import { db } from "../utils/db.server";
 
 class CompanyService {
 

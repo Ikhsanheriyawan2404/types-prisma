@@ -4,7 +4,7 @@ import { encryptPassword } from "../src/helpers/encryption";
 
 const prisma = new PrismaClient();
 
-function companiesRandomId(companies: Company[]): bigint {
+function companiesRandomId(companies: Company[]): number {
   const randomIndex = Math.floor(Math.random() * companies.length);
   const randomCompany = companies[randomIndex];
   return randomCompany.id;

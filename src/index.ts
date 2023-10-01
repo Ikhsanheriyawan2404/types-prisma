@@ -39,7 +39,7 @@ winston.createLogger({
 });
 
 let jobSaldoAccumulationAndReset = new CronJob(
-  '0 * * * * *', // Setiap satu menit (0 detik, setiap menit)
+  '15 * * * * *', // Setiap satu menit (0 detik, setiap menit)
   function() {
     saldoAccumulationJob.start();
   },
