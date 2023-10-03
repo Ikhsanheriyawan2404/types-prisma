@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import UserService from "../service/user.service";
+import UserService from "../services/user.service";
 import Helper from "../helpers/response";
 
-class UserController { 
+class UserController {
 
   public async index(_: Request, res: Response): Promise<Response> {
     try {
@@ -65,7 +65,7 @@ class UserController {
   //       errors: e,
   //     });
   //   }
-  // }; 
+  // };
 
   // SHOW & UPDATE
 }

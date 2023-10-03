@@ -33,7 +33,7 @@ class UserService {
         ] as Key[]
       ): Promise<Pick<User, Key>[]> => {
         const users = await db.user.findMany({
-        //   select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {}),
+          select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {}),
         });
         return users as Pick<User, Key>[];
       };
@@ -98,6 +98,23 @@ class UserService {
 
     //     // return user;
     // }
+
+    public getUserByEmail = async <Key extends keyof User>(
+      email: string,
+      keys: Key[] = [
+        'id',
+        'email',
+        'name',
+        'password',
+        'created_at',
+        'updated_at'
+      ] as Key[]
+    ): Promise<Pick<User, Key> | null> => {
+      return db.user.findUnique({
+        where: { email },
+        select: keys.reduce((obj, k) => ({ ...obj, [k]: true }), {})
+      }) as Promise<Pick<User, Key> | null>;
+    };
 }
 
 export default new UserService();

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
-import CompanyService from "../service/company.service";
+import CompanyService from "../services/company.service";
 const prisma = new PrismaClient()
 class CompanyController {
 

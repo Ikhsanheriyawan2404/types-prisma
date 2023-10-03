@@ -60,6 +60,35 @@ async function main() {
     }));
   }
 
+  const user1: Omit<User,
+      'id' |
+      'email_verified_at' |
+      'remember_token' |
+      'employee_id' |
+      'phone_number' |
+      'phone_number' |
+      'created_at' |
+      'deleted_at' |
+      'updated_at'
+    > = {
+      name: "Ikhsan Heriyawan",
+      email: "ikhsan123@gmail.com",
+      password: await encryptPassword("admin123"),
+      saldo: new Prisma.Decimal(2000_000),
+      department_id: departmentData.id,
+      salary: new Prisma.Decimal(4_900_000), // UMK Kota Jakarta 2022
+      role: "user",
+      active: "1",
+      bank_account: "Mandiri",
+      account_number: "123456789010",
+      account_holder_name: "Anonymus",
+      company_id: companiesRandomId(companies),
+    };
+
+  await prisma.user.create({
+    data: user1
+  })
+
   for (let i = 0; i < totalData; i++) {
     const user: Omit<User,
       'id' |
@@ -72,7 +101,7 @@ async function main() {
       'deleted_at' |
       'updated_at'
     > = {
-      name: faker.company.name(),
+      name: faker.internet.userAgent(),
       email: faker.internet.email(),
       password: await encryptPassword("password123"),
       saldo: new Prisma.Decimal(0),
