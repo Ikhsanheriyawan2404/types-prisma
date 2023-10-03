@@ -1,0 +1,1103 @@
+openapi: "3.0.3"
+info:
+  title: "API Spec  Open API"
+  description: "lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet"
+  version: "1.0.0"
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: "http://127.0.0.1:8000/api/v1"
+  - description: Online
+    url: "http://cfdf-2404-c0-2d10-00-118-ce29.ngrok.io/api/v1"
+paths:
+  /login:
+    post:
+      tags:
+        - "Auth"
+      description: User Login
+      summary: Login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        200:
+          description: "Success Login"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginSuccess"
+        401:
+          description: "Login Failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginFailed"
+        403:
+          description: "Login Failed. Akun Sudah Nonaktif"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginFailedNonactiveUser"
+        422:
+          description: "Login Validation Failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginFailedValidation"
+  /logout:
+    post:
+      tags:
+        - "Auth"
+      description: User Logout
+      summary: Logout
+      security:
+        - Authentication: []
+      responses:
+        200:
+          description: "Success Logout"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutSuccess"
+        401:
+          description: "Login Failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutFailed"
+  /forgot-password:
+    post:
+      tags:
+        - "Forgot Password"
+      description: Forgot Password User
+      summary: Forgot Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "ikhsanheriyawan2404@gmail.com"
+      responses:
+        200:
+          description: "Success Send Email"
+          content:
+            application/json:
+              schema:
+                required:
+                - email
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: "OK"
+                      message:
+                        type: string
+                        example: "Berhasil. kode dikirim ke email."
+                  data:
+                    type: string
+                    example: null
+        422:
+          description: "Validation Failed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 422
+                      status:
+                        type: string
+                        example: "Unprocessable Content"
+                      message:
+                        type: string
+                        example: "Validation Failed"
+                  errors:
+                      type: object
+                      properties:
+                        email:
+                          type: array
+                          items:
+                            example: "The selected email field is invalid"
+  /check-code:
+    post:
+      tags:
+        - "Forgot Password"
+      description: Change new password with confirmation password
+      summary: Update Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - code
+              type: object
+              properties:
+                code:
+                  type: string
+                  format: string
+                  example: "123456"
+      responses:
+        200:
+          description: "Success Verification Code"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: "OK"
+                      message:
+                        type: string
+                        example: "Kode cocok, lanjut ganti password baru."
+                  data:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "123456"
+        422:
+          description: "Validation Failed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 422
+                      status:
+                        type: string
+                        example: "Unprocessable Content"
+                      message:
+                        type: string
+                        example: "Validation Failed"
+                  errors:
+                      type: object
+                      properties:
+                        code:
+                          type: array
+                          items:
+                            example: "The selected code field is invalid"
+  /reset-password:
+    post:
+      tags:
+        - "Forgot Password"
+      description: Forgot Password User
+      summary: Forgot Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - code
+              - password
+              type: object
+              properties:
+                code:
+                  type: string
+                  format: string
+                  example: "123456"
+                password:
+                  type: string
+                  format: password
+                  example: "newpassword123"
+                password_confirmation:
+                  type: string
+                  format: password
+                  example: "newpassword123"
+      responses:
+        200:
+          description: "Success Chnage Password"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 200
+                      status:
+                        type: string
+                        example: "OK"
+                      message:
+                        type: string
+                        example: "Success changed password."
+                  data:
+                    type: string
+                    example: null
+        422:
+          description: "Validation Failed"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 422
+                      status:
+                        type: string
+                        example: "Unprocessable Content"
+                      message:
+                        type: string
+                        example: "Validation Failed"
+                  errors:
+                      type: object
+                      properties:
+                        code:
+                          type: array
+                          items:
+                            example: "The selected code field is invalid"
+                        password:
+                          type: array
+                          items:
+                            example: "The password confirmation does not match."
+  /users/{userId}:
+    get:
+      security:
+        - Authentication: []
+      tags:
+        - "Users"
+      description: User Profile
+      summary: My Profile
+      parameters:
+      - name: userId
+        in: "path"
+        description: User Id
+        schema:
+          type: "number"
+        required: true
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSuccessProfile'
+        404:
+          description: "User Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+        403:
+          description: "User Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserForbiddenAccess'
+  /users/{userId}/history-transactions:
+    get:
+      tags:
+        - "Users"
+      description: User History Transactions
+      summary: Transactions History
+      security:
+        - Authentication: []
+      parameters:
+      - name: userId
+        in: "path"
+        description: User Id
+        schema:
+          type: "number"
+        required: true
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionHistorySuccess'
+        404:
+          description: "User Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+        403:
+          description: "User Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserForbiddenAccess'
+  /users/{userId}/history-saldo:
+    get:
+      tags:
+        - "Users"
+      description: User Saldo Accumulation History
+      summary: Saldo User History
+      security:
+        - Authentication: []
+      parameters:
+      - name: userId
+        in: "path"
+        description: User Id
+        schema:
+          type: "number"
+        required: true
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaldoInHistorySuccess'
+        404:
+          description: "User Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+        403:
+          description: "User Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserForbiddenAccess'
+  /users/{userId}/disbursement:
+    post:
+      tags:
+        - "Users"
+      description: Proccess Disbursement Balance User
+      summary: Disbursement Balance
+      requestBody:
+        content:
+           application/x-www-form-urlencoded:
+            schema:
+              required:
+              - amount
+              - password
+              type: object
+              properties:
+                amount:
+                  type: integer
+                  format: integer
+                  example: 123456
+                password:
+                  type: string
+                  format: string
+                  example: "ikhsan123"
+      parameters:
+      - name: userId
+        in: "path"
+        description: User Id
+        schema:
+          type: "number"
+        required: true
+      security:
+        - Authentication: []
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisbursementSuccess'
+        400:
+          description: "Bad Request Validasi Kesalahan Request Dari User"
+          content:
+            User Not Found:
+              schema:
+                $ref: '#/components/schemas/NotFoundTransactionDisbursement'
+            User Forbidden:
+              schema:
+                $ref: '#/components/schemas/ForbiddenTransactionDisbursement'
+            Maximal Amount:
+              schema:
+                $ref: '#/components/schemas/MaxTransactionDisbursement'
+            Minimal Amount:
+              schema:
+                $ref: '#/components/schemas/MinTransactionDisbursement'
+            Balance Isn't Sufficient:
+              schema:
+                $ref: '#/components/schemas/BalanceErrorTransactionDisbursement'
+            Password Not Correct:
+              schema:
+                $ref: '#/components/schemas/WrongPasswordTransactionDisbursement'
+        422:
+          description: "Validation Failed"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidFailedTransactionDisbursement'
+  /users/{userId}/:
+    put:
+      tags:
+        - "Users"
+      description: Edit Info User
+      summary: Edit User
+      parameters:
+      - name: userId
+        in: "path"
+        description: User Id
+        schema:
+          type: "number"
+        required: true
+      security:
+        - Authentication: []
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSuccessProfile'
+        404:
+          description: "User Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNotFound'
+        403:
+          description: "User Forbidden"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserForbiddenAccess'
+  /banners:
+    get:
+      tags:
+        - "Banner"
+      description: "Get All Banner"
+      security:
+        - Authentication: []
+      summary: Get Banner
+      responses:
+        200:
+          description: "Success Response"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BannerResponse'
+  /fdsfsjdlf/fdsf:
+    get:
+      tags:
+        - "Not Found"
+      description: "Response Misalkan url dari request ngaco"
+      summary: Not Found Response
+      responses:
+        404:
+          description: "Response Misalkan url dari request ngaco"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundResponse"
+components:
+  securitySchemes:
+    Authentication:
+      type: "apiKey"
+      in: "header"
+      name: "Authorization"
+      description: "Authentication For EWA App"
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: "ikhsanheriyawan2404@gmail.com"
+        password:
+          type: string
+          format: password
+          example: "ikhsan123"
+      required:
+        - email
+        - password
+    NotFoundResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 404
+            status:
+              type: string
+              example: "Not Found"
+            message:
+              type: string
+              example: "Not Found. If error persists, contact user@gmail.com"
+        data:
+          type: string
+          example: null
+    UserResponse:
+      properties:
+        id:
+          type: integer
+          example: 1
+        company_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Ikhsan Heriyawan"
+        email:
+          type: string
+          example: "ikhsan@gmail.com"
+        email_verified_at:
+          type: string
+          example: null
+        status:
+          type: string
+          example: "1"
+        role:
+          type: string
+          example: "user"
+        salary:
+          type: integer
+          example: 4800000
+        saldo:
+          type: integer
+          example: 0
+        created_at:
+          type: string
+          example: "03-01-2023"
+        updated_at:
+          type: string
+          example: "2023-01-03T06:54:02.000000Z"
+    UserDetailResponse:
+      properties:
+        id:
+          type: integer
+          example: 1
+        company_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Ikhsan Heriyawan"
+        email:
+          type: string
+          example: "ikhsan@gmail.com"
+        status:
+          type: string
+          example: "1"
+        salary:
+          type: integer
+          example: 4800000
+        saldo:
+          type: integer
+          example: 0
+        company:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "PT. EWA"
+            npwp:
+              type: string
+              example: "42454543543534"
+            nib:
+              type: string
+              example: "42454543543534"
+            working_days:
+              type: integer
+              example: 25
+    LoginSuccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Berhasil login."
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              example: "3|qT3vHxLYKFqdw4PTIfmFK7PXDVR0g2DRMrpd7OBs"
+            user:
+              $ref: '#/components/schemas/UserResponse'
+    UserSuccessLogin:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Berhasil login."
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              example: "3|qT3vHxLYKFqdw4PTIfmFK7PXDVR0g2DRMrpd7OBs"
+            user:
+              $ref: '#/components/schemas/UserResponse'
+    UserSuccessProfile:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Info My Profile."
+        data:
+          $ref: '#/components/schemas/UserDetailResponse'
+    TransactionHistorySuccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Histori Penarikan"
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              user_id:
+                type: integer
+                example: 1
+              amount:
+                type: integer
+                example: 100000
+              bank_code:
+                type: string
+                example: "BRI"
+              account_number:
+                type: string
+                example: "1234567890"
+              account_holder_name:
+                type: string
+                example: "Ikhsan Her"
+              status:
+                type: string
+                example: "COMPLETED"
+              failur_code:
+                type: string
+                example: null
+              createdAt:
+                type: string
+                example: "07-01-2023 01:24:59"
+    SaldoInHistorySuccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Histori Saldo Masuk"
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 1
+              user_id:
+                type: integer
+                example: 1
+              amount:
+                type: integer
+                example: 100000
+              createdAt:
+                type: string
+                example: "07-01-2023 01:24:59"
+    UserNotFound:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 404
+            status:
+              type: string
+              example: "Not Found"
+            message:
+              type: string
+              example: "User tidak ditemukan."
+        data:
+          type: string
+          example: null
+    UserForbiddenAccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 403
+            status:
+              type: string
+              example: "Forbidden"
+            message:
+              type: string
+              example: "Forbidden Area."
+        data:
+          type: string
+          example: null
+    LoginFailed:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 401
+            status:
+              type: string
+              example: "Unauthenticated"
+            message:
+              type: string
+              example: "Gagal login! Email atau password salah"
+        data:
+          type: object
+          example: null
+    LoginFailedNonactiveUser:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 403
+            status:
+              type: string
+              example: "Forbidden"
+            message:
+              type: string
+              example: "Akun sudah nonaktif"
+        data:
+          type: object
+          example: null
+    LoginFailedValidation:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 422
+            status:
+              type: string
+              example: "Unprocessable Content"
+            message:
+              type: string
+              example: "Validation Failed"
+        errors:
+            type: object
+            properties:
+              email:
+                type: array
+                items:
+                  example: "The email field is required"
+              password:
+                type: array
+                items:
+                  example: "The password field is required"
+    LogoutSuccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "HTTP_OK"
+            message:
+              type: string
+              example: "Berhasil logout."
+        data:
+          type: object
+          example: null
+    LogoutFailed:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Unauthenticated"
+    DisbursementSuccess:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "Disbursement sedang diproses"
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "63d155bd9e8ea4681e39a0b9"
+              user_id:
+                type: string
+                example: "63996f960d3a08caf3b3e9b5"
+              external_id:
+                type: string
+                example: "9a990028-d33c-415e-b10b-e243ecc12685"
+              amount:
+                type: integer
+                example: 300000
+              bank_code:
+                type: string
+                example: "BRI"
+              account_number:
+                type: string
+                example: "1234567890"
+              account_holder_name:
+                type: string
+                example: "Ikhsan Her"
+              status:
+                type: string
+                example: "PENDING"
+              disbursement_description:
+                type: string
+                example: "Saya atas nama Ikhsan menyetujui payment terms ini."
+    BalanceErrorTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              default: "Saldo tidak mencukupi"
+        data:
+          type: string
+          example: null
+    ForbiddenTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              default: "Forbidden Access"
+        data:
+          type: string
+          example: null
+    NotFoundTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              default: "Not Found"
+        data:
+          type: string
+          example: null
+    MaxTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              example: "Penarikan tidak lebih dari 1 Juta"
+        data:
+          type: string
+          example: null
+    MinTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              default: "Penarikan harus lebih 30 Ribu"
+        data:
+          type: string
+          example: null
+    WrongPasswordTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            status:
+              type: string
+              example: "Bad Request"
+            message:
+              type: string
+              default: "Password tidak sesuai"
+        data:
+          type: string
+          example: null
+    ValidFailedTransactionDisbursement:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 422
+            status:
+              type: string
+              example: "Unprocessable Content"
+            message:
+              type: string
+              example: "Validation Failed"
+        errors:
+            type: object
+            properties:
+              amount:
+                type: array
+                items:
+                  example: "The amount field is required"
+              password:
+                type: array
+                items:
+                  example: "The password field is required"
+    BannerResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            status:
+              type: string
+              example: "OK"
+            message:
+              type: string
+              example: "List Banner."
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              photo:
+                type: string
+                example: "https:domain.com/storage/image.jpg"
+              title:
+                type: string
+                example: banner1
