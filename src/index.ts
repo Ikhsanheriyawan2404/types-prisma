@@ -5,6 +5,8 @@ import routes from "./routes";
 import saldoAccumulationJob from "./jobs/saldo.accumulation.job";
 import { CronJob } from 'cron';
 import winston from "winston";
+import passport from 'passport';
+import { jwtStrategy } from './config/passport';
 
 dotenv.config();
 
@@ -15,11 +17,15 @@ if (!process.env.PORT) {
   console.error("No port specified");
   process.exit(1);
 }
-  
+
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
+
 app.use(cors());
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 app.use(routes);
+
 
 winston.createLogger({
   // Log only if level is less than (meaning more severe) or equal to this
@@ -49,6 +55,7 @@ let jobSaldoAccumulationAndReset = new CronJob(
 );
 jobSaldoAccumulationAndReset.start();
 
+
 const start = async (): Promise<void> => {
   try {
     app.listen(port, () => {
@@ -59,7 +66,7 @@ const start = async (): Promise<void> => {
     process.exit(1);
   }
 };
-  
+
 void start();
 
 export default app;
