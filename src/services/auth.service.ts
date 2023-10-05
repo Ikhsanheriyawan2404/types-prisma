@@ -70,40 +70,40 @@ class AuthService {
     };
   };
 
-    /**
-    * Logout
-    * @param {string} refreshToken
-    * @returns {Promise<void>}
-    */
-    public logout = async (refreshToken: string): Promise<void> => {
-      const refreshTokenData = await db.token.findFirst({
-        where: {
-          token: refreshToken,
-          type: TokenType.REFRESH,
-          blacklisted: false
-        }
-      });
-      if (!refreshTokenData) {
-        throw new Error('Not found');
+  /**
+  * Logout
+  * @param {string} refreshToken
+  * @returns {Promise<void>}
+  */
+  public logout = async (refreshToken: string): Promise<void> => {
+    const refreshTokenData = await db.token.findFirst({
+      where: {
+        token: refreshToken,
+        type: TokenType.REFRESH,
+        blacklisted: false
       }
+    });
+    if (!refreshTokenData) {
+      throw new Error('Not found');
+    }
+    await db.token.delete({ where: { id: refreshTokenData.id } });
+  };
+
+  /**
+  * Refresh auth tokens
+  * @param {string} refreshToken
+  * @returns {Promise<AuthTokensResponse>}
+  */
+  public refreshAuth = async (refreshToken: string): Promise<AuthTokensResponse> => {
+    try {
+      const refreshTokenData = await tokenService.verifyToken(refreshToken, TokenType.REFRESH);
+      const { user_id } = refreshTokenData;
       await db.token.delete({ where: { id: refreshTokenData.id } });
-    };
+      return tokenService.generateAuthTokens({ id: user_id });
+    } catch (error) {
+      throw new Error(ReasonPhrases.UNAUTHORIZED);
+    }
+  };
+}
 
-    /**
-    * Refresh auth tokens
-    * @param {string} refreshToken
-    * @returns {Promise<AuthTokensResponse>}
-    */
-    public refreshAuth = async (refreshToken: string): Promise<AuthTokensResponse> => {
-      try {
-        const refreshTokenData = await tokenService.verifyToken(refreshToken, TokenType.REFRESH);
-        const { user_id } = refreshTokenData;
-        await db.token.delete({ where: { id: refreshTokenData.id } });
-        return tokenService.generateAuthTokens({ id: user_id });
-      } catch (error) {
-        throw new Error(ReasonPhrases.UNAUTHORIZED);
-      }
-    };
-  }
-
-  export default new AuthService();
+export default new AuthService();

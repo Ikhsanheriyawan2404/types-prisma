@@ -3,6 +3,7 @@ import { Prisma, Transaction } from "@prisma/client";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import UserService from "../services/user.service";
+import Helper from "../utils/helper";
 
 class TransactionService {
 
@@ -40,7 +41,6 @@ class TransactionService {
       beneficiary_email: user?.email,
       idempotency_key: transactionData.uuid,
     };
-
 
     const transaction = await db.transaction.create({
       data: {

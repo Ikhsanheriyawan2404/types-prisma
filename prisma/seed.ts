@@ -1,13 +1,56 @@
-import { Company, User, Department, PrismaClient, Prisma } from "@prisma/client";
+import { Company, User, Department, PrismaClient, Prisma, Transaction } from "@prisma/client";
 import { faker } from "@faker-js/faker";
 import { encryptPassword } from "../src/helpers/encryption";
+import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
+async function resetAutoIncrementTable(tableNames: Array<string>): Promise<void> {
+  tableNames.forEach(async (table) => {
+    await prisma.$queryRaw`ALTER TABLE "${table}" AUTO_INCREMENT = 1`
+  })
+}
 function companiesRandomId(companies: Company[]): number {
   const randomIndex = Math.floor(Math.random() * companies.length);
   const randomCompany = companies[randomIndex];
   return randomCompany.id;
+}
+
+function usersRandomId(users: User[]) {
+  const randomIndex = Math.floor(Math.random() * users.length);
+  return users[randomIndex];
+}
+
+function generateUuid(): string {
+  let uuid: string = uuidv4();
+  return uuid;
+}
+
+async function generateBank() {
+  const result = await axios.get('https://bigflip.id/big_sandbox_api/v2/general/banks', {
+    headers: {
+      Authorization: "Basic " + btoa(process.env.ACCESS_TOKEN + ":")
+    },
+  })
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error.response.data);
+    });
+
+  result.forEach(async (bank: any) => {
+    console.time("Bank " + bank.name + " created");
+    await prisma.bank.create({
+      data: {
+        bank_code: bank.bank_code,
+        name: bank.name,
+        fee: bank.fee,
+      }
+    })
+    console.timeEnd("Bank " + bank.name + " created");
+  });
 }
 
 async function main() {
@@ -18,9 +61,23 @@ async function main() {
   await prisma.user.deleteMany({});
   await prisma.department.deleteMany({});
   await prisma.company.deleteMany({});
+  await prisma.bank.deleteMany({});
 
-  const totalData = 100;
+  // resetAutoIncrementTable([
+  //   'tokens',
+  //   'transactions',
+  //   'saldo_histories',
+  //   'users',
+  //   'departments',
+  //   'companies',
+  //   'banks',
+  // ]);
+
+  await generateBank();
+
+  const totalData = 1000;
   let companies = [];
+  let users = [];
 
   const department: Omit<Department, 'id'> = {
     name: 'Officer',
@@ -101,7 +158,7 @@ async function main() {
       'deleted_at' |
       'updated_at'
     > = {
-      name: faker.internet.userAgent(),
+      name: faker.internet.userName(),
       email: faker.internet.email(),
       password: await encryptPassword("password123"),
       saldo: new Prisma.Decimal(0),
@@ -115,11 +172,39 @@ async function main() {
       company_id: companiesRandomId(companies),
     };
 
-    await prisma.user.create({
+    users.push(await prisma.user.create({
       data: user,
-    })
+    }));
   }
 
+  for (let i = 0; i < totalData; i++) {
+    let user = usersRandomId(users)
+
+    console.time("Transaction " + user.name + " created")
+    const transaction: Omit<Transaction,
+      'id' |
+      'created_at' |
+      'updated_at'
+    > = {
+      uuid: generateUuid(),
+      user_id: user.id,
+      total: new Prisma.Decimal(300_000),
+      vat: new Prisma.Decimal(2_400),
+      profit: new Prisma.Decimal(27_600),
+      bank_code: user.bank_account,
+      account_number: user.account_number,
+      account_holder_name: user.account_holder_name,
+      description: null,
+      status: "COMPLETED",
+      failure_code: null,
+    };
+
+    console.timeEnd("Transaction " + user.name + " created")
+
+    await prisma.transaction.create({
+      data: transaction,
+    })
+  }
 }
 
 main()
