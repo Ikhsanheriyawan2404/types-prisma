@@ -12,6 +12,8 @@ function companiesRandomId(companies: Company[]): number {
 
 async function main() {
   // use with caution. this will delete all data in the database
+  await prisma.token.deleteMany({});
+  await prisma.transaction.deleteMany({});
   await prisma.saldoHistory.deleteMany({});
   await prisma.user.deleteMany({});
   await prisma.department.deleteMany({});
@@ -66,7 +68,6 @@ async function main() {
       'remember_token' |
       'employee_id' |
       'phone_number' |
-      'phone_number' |
       'created_at' |
       'deleted_at' |
       'updated_at'
@@ -79,7 +80,7 @@ async function main() {
       salary: new Prisma.Decimal(4_900_000), // UMK Kota Jakarta 2022
       role: "user",
       active: "1",
-      bank_account: "Mandiri",
+      bank_account: "mandiri",
       account_number: "123456789010",
       account_holder_name: "Anonymus",
       company_id: companiesRandomId(companies),
@@ -95,7 +96,6 @@ async function main() {
       'email_verified_at' |
       'remember_token' |
       'employee_id' |
-      'phone_number' |
       'phone_number' |
       'created_at' |
       'deleted_at' |

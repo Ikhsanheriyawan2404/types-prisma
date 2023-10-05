@@ -50,6 +50,9 @@ class UserService {
             'id',
             'email',
             'name',
+            'account_holder_name',
+            'account_number',
+            'bank_account',
             'created_at',
             'updated_at'
         ] as Key[]

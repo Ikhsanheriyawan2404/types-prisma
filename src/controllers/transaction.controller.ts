@@ -8,13 +8,20 @@ import TransactionService from "../services/transaction.service";
 
 class TransactionController {
 
+  public moduleName: string;
+
+  constructor () {
+    this.moduleName = "Transaction";
+  }
+
   public create = async (req: Request, res: Response) => {
     try {
+      const userId = Number(req.params.id);
       const transactionData = {
         ...req.body,
       };
-      const transactions = await TransactionService.disbursement(transactionData);
-      return Helper.response(res, StatusCodes.CREATED, `Create Transaction`, transactions);
+      const transactions = await TransactionService.disbursement(transactionData, userId);
+      return Helper.response(res, StatusCodes.CREATED, `Create ${this.moduleName}`, transactions);
     } catch (e: any) {
       return Helper.responseErr(
         res,

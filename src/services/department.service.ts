@@ -1,70 +1,67 @@
 import { User } from "@prisma/client";
 import { db } from "../utils/db.server";
-import { log } from "winston";
-
-// import { Department } from "@prisma/client";
 
 type Department = {
-    id: number,
-    name: string,
-    users?: User[]
+  id: number,
+  name: string,
+  users?: User[]
 }
 
 class DepartmentService {
 
-    public listData = async (): Promise<Department[]> => {
-        return await db.department.findMany({
-            select: {
-              id: true,
-              name: true,
-            },
-        });
-    }
+  public listData = async (): Promise<Department[]> => {
+    return await db.department.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+  }
 
-    public findById = async (id: number): Promise<Department | null> => {
-        return db.department.findFirst({
-            where: {
-                id,
-            },
-            select: {
-                id: true,
-                name: true,
-                users: true
-            }
-        });
-    }
+  public findById = async (id: number): Promise<Department | null> => {
+    return db.department.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        users: true
+      }
+    });
+  }
 
-    public create = async (name: string): Promise<Department> => {
-        return db.department.create({
-            data: {
-                name: name,
-            },
-            select: {
-                id: true,
-                name: true,
-                users: true,
-            }
-        })
-    }
+  public create = async (name: string): Promise<Department> => {
+    return db.department.create({
+      data: {
+        name: name,
+      },
+      select: {
+        id: true,
+        name: true,
+        users: true,
+      }
+    })
+  }
 
-    public update = async (id: number, name: string): Promise<Department> => {
-        return db.department.update({
-            where: {
-                id,
-            },
-            data: {
-                name,
-            },
-        });
-    }
+  public update = async (id: number, name: string): Promise<Department> => {
+    return db.department.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+      },
+    });
+  }
 
-    public delete = async (id: number): Promise<Department> => {
-        return db.department.delete({
-            where: {
-                id,
-            },
-        });
-    }
+  public delete = async (id: number): Promise<Department> => {
+    return db.department.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
 
 export default new DepartmentService();
