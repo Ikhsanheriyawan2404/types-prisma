@@ -1,5 +1,6 @@
 import { Response } from "express";
 import bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ApiResponse<T> {
   meta: {
@@ -22,7 +23,7 @@ class Helper {
     };
     return res.status(code).json(responseBody);
   };
-    
+
   public responseErr = <T>(res: Response, code: number, message: string, errors: T) => {
     const responseBody: ApiResponse<T> = {
       meta: {
@@ -42,6 +43,11 @@ class Helper {
   public isPasswordMatch = async (password: string, userPassword: string) => {
     return bcrypt.compare(password, userPassword);
   };
+
+  public createUuid = (): string => {
+    let uuid: string = uuidv4();
+    return uuid;
+  }
 }
 
 export default new Helper();
