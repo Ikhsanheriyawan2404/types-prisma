@@ -48,7 +48,11 @@ class DepartmentController {
   public create = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { name } = req.body;
-      const department = await DepartmentService.create(name);
+      const data = {
+        name,
+        slug: name.toLowerCase().replace(/\s+/g, '-'),
+      }
+      const department = await DepartmentService.create(data);
 
       return Helper.response(res, StatusCodes.CREATED, "Department Created", department);
     } catch (e: any) {
@@ -65,13 +69,17 @@ class DepartmentController {
     try {
       const { id } = req.params;
       const { name } = req.body;
-      const department = await DepartmentService.update(Number(id), name);
+      const data = {
+        name,
+        slug: name.toLowerCase().replace(/\s+/g, '-'),
+      }
+      const department = await DepartmentService.update(Number(id), data);
 
       return Helper.response(res, StatusCodes.OK, `${this.moduleName} Updated`, department);
     } catch (e: any) {
       return Helper.responseErr(
         res,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        e.name,
         ReasonPhrases.INTERNAL_SERVER_ERROR,
         e.message
       );
@@ -81,17 +89,19 @@ class DepartmentController {
   public destroy = async (req: Request, res: Response): Promise<Response> => {
     try {
       const { id } = req.params;
-      const department = await DepartmentService.delete(Number(id))
 
+      const department = await DepartmentService.findById(Number(id));
       if (!department) {
-        return Helper.responseErr(res, StatusCodes.NOT_FOUND, `{this.moduleName} Not Found`, null);
+        const error = new Error(`${this.moduleName} Not Found`);
+        // error.name = ReasonPhrases.NOT_FOUND;
+        throw error;
       }
 
       return Helper.response(res, StatusCodes.OK, `${this.moduleName} Deleted`, null);
     } catch (e: any) {
       return Helper.responseErr(
         res,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        404,
         ReasonPhrases.INTERNAL_SERVER_ERROR,
         e.message
       );

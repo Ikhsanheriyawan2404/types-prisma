@@ -4,6 +4,7 @@ import { db } from "../utils/db.server";
 type Department = {
   id: number,
   name: string,
+  slug: string,
   users?: User[]
 }
 
@@ -14,6 +15,7 @@ class DepartmentService {
       select: {
         id: true,
         name: true,
+        slug: true,
       },
     });
   }
@@ -26,31 +28,46 @@ class DepartmentService {
       select: {
         id: true,
         name: true,
+        slug: true,
         users: true
       }
     });
   }
 
-  public create = async (name: string): Promise<Department> => {
-    return db.department.create({
-      data: {
-        name: name,
+  public findBySlug = async (slug: string): Promise<Department | null> => {
+    return db.department.findFirst({
+      where: {
+        slug: slug,
       },
       select: {
         id: true,
         name: true,
-        users: true,
+        slug: true,
+      }
+    });
+  }
+
+  public create = async (data: Omit<Department, "id">): Promise<Department> => {
+    return db.department.create({
+      data: {
+        name: data.name,
+        slug: data.slug,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
       }
     })
   }
 
-  public update = async (id: number, name: string): Promise<Department> => {
+  public update = async (id: number, data: Omit<Department, "id">): Promise<Department> => {
     return db.department.update({
       where: {
         id,
       },
       data: {
-        name,
+        name: data.name,
       },
     });
   }

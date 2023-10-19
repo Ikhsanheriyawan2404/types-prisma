@@ -1,4 +1,3 @@
-import { encryptPassword } from "../helpers/encryption";
 import { db } from "../utils/db.server";
 import { User } from "@prisma/client";
 
@@ -77,7 +76,7 @@ class UserService {
     //         data: {
     //             name,
     //             email,
-    //             password: await encryptPassword(password),
+    //             password: await (password),
     //             saldo,
     //             salary,
     //             company: {

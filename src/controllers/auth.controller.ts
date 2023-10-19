@@ -3,8 +3,6 @@ import {
   ReasonPhrases,
   StatusCodes,
 } from 'http-status-codes';
-import exclude from '../utils/exclude';
-import { User } from '@prisma/client';
 import AuthService from '../services/auth.service';
 import TokenService from '../services/token.service';
 import Helper from '../utils/helper';

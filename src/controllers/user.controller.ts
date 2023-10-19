@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserService from "../services/user.service";
-import Helper from "../helpers/response";
+import Helper from "../utils/helper";
 
 class UserController {
 

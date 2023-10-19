@@ -1,6 +1,6 @@
 import { Company, User, Department, PrismaClient, Prisma, Transaction } from "@prisma/client";
 import { faker } from "@faker-js/faker";
-import { encryptPassword } from "../src/helpers/encryption";
+import Helper from "../src/utils/helper";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -81,6 +81,7 @@ async function main() {
 
   const department: Omit<Department, 'id'> = {
     name: 'Officer',
+    slug: 'officer',
     created_at: faker.date.past(),
     updated_at: faker.date.recent(),
   };
@@ -131,7 +132,7 @@ async function main() {
     > = {
       name: "Ikhsan Heriyawan",
       email: "ikhsan123@gmail.com",
-      password: await encryptPassword("admin123"),
+      password: await Helper.encryptPassword("admin123"),
       saldo: new Prisma.Decimal(2000_000),
       department_id: departmentData.id,
       salary: new Prisma.Decimal(4_900_000), // UMK Kota Jakarta 2022
@@ -160,7 +161,7 @@ async function main() {
     > = {
       name: faker.internet.userName(),
       email: faker.internet.email(),
-      password: await encryptPassword("password123"),
+      password: await Helper.encryptPassword("password123"),
       saldo: new Prisma.Decimal(0),
       department_id: departmentData.id,
       salary: new Prisma.Decimal(4_900_000), // UMK Kota Jakarta 2022

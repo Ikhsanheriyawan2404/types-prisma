@@ -10,6 +10,7 @@ datasource db {
 model Department {
   id         Int       @id @default(autoincrement())
   name       String    @db.VarChar(255)
+  slug       String    @unique @db.VarChar(255)
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
   users      User[]
@@ -123,7 +124,7 @@ model Token {
   type        TokenType
   expires     DateTime
   blacklisted Boolean
-  created_at   DateTime  @default(now())
+  created_at  DateTime  @default(now())
   user        User      @relation(fields: [user_id], references: [id])
   user_id     Int
 

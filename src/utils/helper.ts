@@ -1,15 +1,7 @@
 import { Response } from "express";
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
-
-interface ApiResponse<T> {
-  meta: {
-    code: number;
-    message: string;
-  };
-  data?: T;
-  errors?: T;
-}
+import ApiResponse from "./ApiResponse";
 
 class Helper {
 
@@ -48,6 +40,20 @@ class Helper {
     let uuid: string = uuidv4();
     return uuid;
   }
+
+  /**
+   * Exclude keys from object
+   * @param obj
+   * @param keys
+   * @returns
+   */
+  public exclude = <Type, Key extends keyof Type>(obj: Type, keys: Key[]): Omit<Type, Key> => {
+    for (const key of keys) {
+      delete obj[key];
+    }
+    return obj;
+  };
+
 }
 
 export default new Helper();
