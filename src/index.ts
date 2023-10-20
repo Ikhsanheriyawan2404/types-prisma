@@ -23,7 +23,7 @@ passport.use('jwt', jwtStrategy);
 
 app.use(cors());
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(routes);
 
 
@@ -45,7 +45,7 @@ winston.createLogger({
 });
 
 let jobSaldoAccumulationAndReset = new CronJob(
-  '15 * * * * *', // Setiap satu menit (0 detik, setiap menit)
+  '15 * * * * *',
   function() {
     saldoAccumulationJob.start();
   },
