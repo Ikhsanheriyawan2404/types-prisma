@@ -1,14 +1,13 @@
-# Ease Wage Access
+# fdsafasdfafk
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## Deskripsi
-Rest API Ease Wage Access For Employees Multi Companies.
+fdasfasdf
 
 ## Fitur Utama
-- Disbursement
-- Saldo Accumulation
-
+- fasdfasdf
+- 32472737uhdsafkd
 ## Instalasi
 ### Instalasi Server Colyseus
 
